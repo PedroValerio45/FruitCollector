@@ -7,11 +7,12 @@ public sealed class PlayerInventory : MonoBehaviour, IStorable
 {
     // TODO: store items, stack amounts, etc. // DONE
     public Dictionary<string, int> inventoryDic_Player = new Dictionary<string, int>(); // Chest and save need this
+    public static int maxInvSize_Player = 32; // Added max inventory size for player // Chest needs this
 
     public void Store(IPickable item)
     {
         // TODO: implement inventory rules. // DONE
-        if(inventoryDic_Player.ContainsKey(item.Id)) { inventoryDic_Player[item.Id]++; }
+        if (inventoryDic_Player.ContainsKey(item.Id)) { inventoryDic_Player[item.Id]++; }
         else { inventoryDic_Player[item.Id] = 1; }
 
         // DEBUG (unity cant show dictionaries in the inspector bruh)
@@ -30,7 +31,20 @@ public sealed class PlayerInventory : MonoBehaviour, IStorable
             return;
         else Debug.Log("has pickable");
 
-            // The pickable decides what happens on pick.
-            pickable.Pick(this);
+        // Check maxStack before picking up item
+        if (inventoryDic_Player[pickable.Id] < pickable.MaxStack
+            || GetInventoryItemsAmount_Player() < maxInvSize_Player) { pickable.Pick(this); }
+        else { Debug.Log($"Cannot pick - stack full! Max: {pickable.MaxStack}"); }
+    }
+
+    // Added function to get total amount of items in player inv
+    public int GetInventoryItemsAmount_Player() // Chest needs this
+    {
+        int totalItems = 0;
+        foreach (var item in inventoryDic_Player)
+        {
+            totalItems += item.Value;
+        }
+        return totalItems;
     }
 }

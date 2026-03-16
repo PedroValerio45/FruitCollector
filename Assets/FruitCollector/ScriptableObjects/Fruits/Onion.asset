@@ -15,3 +15,4 @@ MonoBehaviour:
   id: fruit:onion
   displayName: Onion
   sprite: {fileID: 7910457539227548644, guid: 188ae80dcb8038b4aa6dbd9d27cc4b2e, type: 3}
+  maxStack: 16

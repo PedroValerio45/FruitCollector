@@ -12,6 +12,9 @@ public sealed class Fruit : MonoBehaviour, IPickable
     public string Id => data != null ? data.Id : string.Empty;
     public string DisplayName => data != null ? data.DisplayName : "(Fruit)";
 
+    // Added check
+    public int MaxStack => data != null ? data.MaxStack : 64;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();

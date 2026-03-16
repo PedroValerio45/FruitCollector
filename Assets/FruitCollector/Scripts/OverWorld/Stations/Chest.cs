@@ -20,6 +20,7 @@ public sealed class Chest : MonoBehaviour, IInteractable
 
     // New dictionary for stored items
     public Dictionary<string, int> inventoryDic_Chest = new Dictionary<string, int>(); // Save needs this
+    private static int maxInvSize_Chest = 128; // Added max inventory size for chest
 
     private void Awake()
     {
@@ -81,5 +82,16 @@ public sealed class Chest : MonoBehaviour, IInteractable
     public EInteractionState GetInteractionState()
     {
         return InteractionState;
+    }
+
+    // Added function to get total amount of items in chest inv
+    private int GetInventoryItemsAmount_Chest()
+    {
+        int totalItems = 0;
+        foreach (var item in inventoryDic_Chest)
+        {
+            totalItems += item.Value;
+        }
+        return totalItems;
     }
 }

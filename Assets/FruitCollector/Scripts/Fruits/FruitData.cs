@@ -9,11 +9,15 @@ public sealed class FruitData : ScriptableObject
     [SerializeField] private string id;
     [SerializeField] private string displayName;
     [SerializeField] private Sprite sprite;
+    // Added max stack ammount
+    [SerializeField] private int maxStack;
 
     public string Id => id;
     public string DisplayName => displayName;
     public Sprite Sprite => sprite;
 
+    // Added this
+    public int MaxStack => maxStack;
 
     private void OnValidate()
     {
@@ -22,5 +26,9 @@ public sealed class FruitData : ScriptableObject
 
         if (string.IsNullOrWhiteSpace(displayName))
             displayName = name.Trim();
+
+        // Added fallback
+        if (maxStack == 0)
+            maxStack = 16; // Default 
     }
 }
