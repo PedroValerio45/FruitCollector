@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static UnityEditor.Progress;
 
 [DisallowMultipleComponent]
@@ -13,8 +14,8 @@ public sealed class Chest : MonoBehaviour, IInteractable
     private EInteractionState InteractionState;
     private Collider2D triggerCollider;
     private Animator animator;
-    // I'm gonna need the player's inventory
-    private PlayerInventory playerInventory;
+    private PlayerInventory playerInventory; // I'm gonna need the player's inventory
+    private UI_Text_Chest chestUI; // I need this for the UI of the chest
 
     public string ChestId => chestId;
 
@@ -25,11 +26,11 @@ public sealed class Chest : MonoBehaviour, IInteractable
     private void Awake()
     {
         triggerCollider = GetComponent<Collider2D>();
-        triggerCollider.isTrigger = true;
-
         animator = GetComponent<Animator>();
+        playerInventory = FindFirstObjectByType<PlayerInventory>(); // Added this
+        chestUI = FindFirstObjectByType<UI_Text_Chest>(); // Added this
 
-        playerInventory = FindFirstObjectByType<PlayerInventory>(); // Should always be the player
+        triggerCollider.isTrigger = true;
     }
 
     public void Interact(IInteractor interactor)
@@ -47,7 +48,7 @@ public sealed class Chest : MonoBehaviour, IInteractable
         InteractionState = EInteractionState.INTERACTING;
         animator.SetBool(ANIMATOR_OPENED_HASH, true);
 
-        // TODO: Show and apply store logic. // DONE (it tecnically works)
+        // TODO: Show and apply store logic. // DONE (it tecnically works lol)
 
         // TEMP: just add items to chest on open, and if player inv is empty then take everything instead
         if (playerInventory.inventoryDic_Player.Count == 0 && inventoryDic_Chest.Count == 0)
@@ -68,6 +69,8 @@ public sealed class Chest : MonoBehaviour, IInteractable
             Debug.Log("Player stored everything in chest");
         }
 
+        chestUI.ChangeChestText(this, true);
+
         // DEBUG (unity cant show dictionaries in the inspector bruh)
         foreach (var invItem in playerInventory.inventoryDic_Player) { Debug.Log($"PLAYER Fruit ID: {invItem.Key}, Count: {invItem.Value}"); }
         foreach (var invItem in inventoryDic_Chest) { Debug.Log($" CHEST Fruit ID: {invItem.Key}, Count: {invItem.Value}"); }
@@ -77,6 +80,8 @@ public sealed class Chest : MonoBehaviour, IInteractable
     {
         InteractionState = EInteractionState.FINISHED;
         animator.SetBool(ANIMATOR_OPENED_HASH, false);
+
+        chestUI.ChangeChestText(this, false);
     }
 
     public EInteractionState GetInteractionState()
@@ -84,7 +89,7 @@ public sealed class Chest : MonoBehaviour, IInteractable
         return InteractionState;
     }
 
-    // Added function to get total amount of items in chest inv
+    // (UNUSED) Added function to get total amount of items in chest inv
     private int GetInventoryItemsAmount_Chest()
     {
         int totalItems = 0;

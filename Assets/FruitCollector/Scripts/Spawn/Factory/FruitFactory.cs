@@ -5,7 +5,6 @@ public sealed class FruitFactory : MonoBehaviour, IFruitFactory
 {
     [SerializeField] private Fruit fruitPrefab;    
     
-
     public Fruit Create(FruitData data, Vector3 position, Quaternion rotation, Transform parent = null)
     {
         if (fruitPrefab == null)

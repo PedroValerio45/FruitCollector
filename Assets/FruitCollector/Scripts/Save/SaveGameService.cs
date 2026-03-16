@@ -24,6 +24,7 @@ public sealed class SaveGameService : MonoBehaviour
     private PlayerInventory playerInventory;
     private Chest chest;
     private IntervalSpawner intervalSpawner;
+    private UI_Text_Msg messageUI;
 
     [Header("File Paths")]
     private static string filePath => Path.Combine(Application.persistentDataPath, "saveDataUsed.json"); // "=>" is "readOnly"
@@ -39,6 +40,7 @@ public sealed class SaveGameService : MonoBehaviour
         playerInventory = FindFirstObjectByType<PlayerInventory>();
         chest = FindFirstObjectByType<Chest>();
         intervalSpawner = FindFirstObjectByType<IntervalSpawner>();
+        messageUI = FindFirstObjectByType<UI_Text_Msg>();
 
         LoadGame();
     }
@@ -81,7 +83,7 @@ public sealed class SaveGameService : MonoBehaviour
 
     public void SaveGame()
     {
-        // TODO: Implement game saving logic here.
+        // TODO: Implement game saving logic here. // DONE
 
         // Create or overwrite backup file with old data if save file already exists
         if (File.Exists(filePath))
@@ -125,8 +127,15 @@ public sealed class SaveGameService : MonoBehaviour
         }
         else
         {
-            string json = File.ReadAllText(filePath);
-            data = JsonUtility.FromJson<DataToSave>(json);
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                data = JsonUtility.FromJson<DataToSave>(json);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError($"Failed to load game data: {error.Message}");
+            }
 
             // Apply to game
             foreach (var fruit in data.fruitsInScene)
@@ -138,32 +147,25 @@ public sealed class SaveGameService : MonoBehaviour
             Debug.Log("Loaded save");
         }
 
-        GetPlayTime();
-        GetTimeSinceLastSession();
+        ShowPlayTimeAndTimeSinceLastSession();
 
         // DEBUG
         Debug.Log("Load finished");
     }
 
-    private void GetPlayTime()
+    private void ShowPlayTimeAndTimeSinceLastSession()
     {
         // Convert seconds to hours and minutes
         int hours = Mathf.FloorToInt(data.playtime_ToBeSaved / 3600);
         int minutes = Mathf.FloorToInt((data.playtime_ToBeSaved % 3600) / 60);
 
-        string message = $"Tiempo total de juego: {hours} horas y {minutes} minutos";
-        Debug.Log(message);
-    }
+        DateTime lastSession = DateTime.Parse(data.currentDateTime);
+        TimeSpan timeSinceLast = DateTime.Now - lastSession;
 
-    private void GetTimeSinceLastSession()
-    {
-        if (data.currentDateTime != null)
-        {
-            DateTime lastSession = DateTime.Parse(data.currentDateTime);
-            TimeSpan timeSinceLast = DateTime.Now - lastSession;
+        string message = $"Tiempo total de juego: {hours} horas y {minutes} minutos\n" +
+            $"Hace {timeSinceLast.Days} días, {timeSinceLast.Hours} horas y {timeSinceLast.Minutes}minutos desde tu última sesión de juego";
 
-            Debug.Log($"Hace {timeSinceLast.Days} días, {timeSinceLast.Hours} horas y {timeSinceLast.Minutes} minutos desde tu última sesión de juego");
-        }
+        messageUI.ChangeMessageText(message); // Send to UI_Text_Msg
     }
 
     public Vector2 GetSavedPlayerPosition()

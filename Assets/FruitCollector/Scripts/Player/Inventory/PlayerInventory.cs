@@ -23,20 +23,6 @@ public sealed class PlayerInventory : MonoBehaviour, IStorable
         // Debug.Log($"Picked: {item.DisplayName} ({item.Id})");
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other == null) return;
-
-        if (!other.TryGetComponent<IPickable>(out var pickable))
-            return;
-        else Debug.Log("has pickable");
-
-        // Check maxStack before picking up item
-        if (inventoryDic_Player[pickable.Id] < pickable.MaxStack
-            || GetInventoryItemsAmount_Player() < maxInvSize_Player) { pickable.Pick(this); }
-        else { Debug.Log($"Cannot pick - stack full! Max: {pickable.MaxStack}"); }
-    }
-
     // Added function to get total amount of items in player inv
     public int GetInventoryItemsAmount_Player() // Chest needs this
     {
@@ -46,5 +32,19 @@ public sealed class PlayerInventory : MonoBehaviour, IStorable
             totalItems += item.Value;
         }
         return totalItems;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other == null) return;
+
+        if (!other.TryGetComponent<IPickable>(out var pickable))
+            return;
+        else Debug.Log("has pickable");
+
+        // Check maxStack before picking up item
+        if (inventoryDic_Player.ContainsKey(pickable.Id) && inventoryDic_Player[pickable.Id] < pickable.MaxStack
+            || GetInventoryItemsAmount_Player() < maxInvSize_Player) { pickable.Pick(this); }
+        else { Debug.Log($"Cannot pick - stack full! (Or it's fine and we just don't have any of this type) Max: {pickable.MaxStack}"); }
     }
 }
