@@ -10,15 +10,17 @@ public sealed class PlayerMovement : MonoBehaviour
     private Vector2 input;
 
     private SpriteRenderer sprite;
+    private SaveGameService saveGameService;
 
-
-    private void OnEnable()
+    // Changed OnEnable to Start
+    private void Start()
     {
-        // TODO: Set position from save file.
+        // TODO: Set position from save file. // DONE
 
+        saveGameService = FindFirstObjectByType<SaveGameService>();
 
+        transform.position = saveGameService.GetSavedPlayerPosition();
     }
-
 
     private void Awake()
     {
@@ -28,7 +30,6 @@ public sealed class PlayerMovement : MonoBehaviour
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
     }
-
 
     private void Update()
     {
@@ -43,7 +44,6 @@ public sealed class PlayerMovement : MonoBehaviour
         if (input.sqrMagnitude > 0f)
             sprite.flipX = input.x < 0f;
     }
-
 
     private void FixedUpdate()
     {

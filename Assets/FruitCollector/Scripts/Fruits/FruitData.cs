@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Fruit Picker/Fruits/Fruit Data", fileName = "FruitData")]

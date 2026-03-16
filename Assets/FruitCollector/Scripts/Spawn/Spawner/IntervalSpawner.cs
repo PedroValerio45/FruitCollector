@@ -83,6 +83,11 @@ public class IntervalSpawner : MonoBehaviour
         return false;
     }
 
+    // Added function to spawn fruits manually on load
+    public void SpawnFruitFromLoadFile(int index, Vector2 pos)
+    {
+        factory.Create(selector.GetFruitData(index), pos, Quaternion.identity);
+    }
 
     public void StartSpawning()
     {

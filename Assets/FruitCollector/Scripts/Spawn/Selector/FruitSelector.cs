@@ -21,4 +21,11 @@ public class FruitSelector : MonoBehaviour, IFruitSelector
 
         return data;
     }
+
+    // Added function to get fruit data of choice
+    public FruitData GetFruitData(int fruitIndex)
+    {
+        var data = availableFruits[fruitIndex];
+        return data;
+    }
 }
