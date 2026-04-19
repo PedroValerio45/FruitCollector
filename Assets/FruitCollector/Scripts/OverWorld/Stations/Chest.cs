@@ -64,7 +64,11 @@ public sealed class Chest : MonoBehaviour, IInteractable
         }
         else
         {
-            foreach (var invItem in playerInventory.inventoryDic_Player) { inventoryDic_Chest[invItem.Key] = invItem.Value; }
+            foreach (var invItem in playerInventory.inventoryDic_Player)
+            {
+                if (inventoryDic_Chest.ContainsKey(invItem.Key)) { inventoryDic_Chest[invItem.Key] += invItem.Value; }
+                else { inventoryDic_Chest[invItem.Key] = invItem.Value; }
+            }
             playerInventory.inventoryDic_Player.Clear();
             Debug.Log("Player stored everything in chest");
         }
